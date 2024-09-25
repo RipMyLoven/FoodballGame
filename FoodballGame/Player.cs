@@ -8,26 +8,35 @@ namespace FoodballGame
 {
     public class Player
     {
-        public string Name { get; }
-        public double X { get; private set; }
-        public double Y { get; private set; }
+        public string Name { get; } // Имя игрока
+        public double X { get; private set; } // Текущая позиция игрока по оси X
+        public double Y { get; private set; } // Текущая позиция игрока по оси Y
 
-        private double _vx, _vy;//передвижение по x y 
-        public Team? Team { get; set; } = null; //
+        // Скорость игрока по осям X и Y
+        private double _vx, _vy;
 
-        private const double MaxSpeed = 5; //Максимальная скороть
+        // Команда, в которой состоит игрок (по умолчанию null)
+        public Team? Team { get; set; } = null;
+
+        // Максимальная скорость передвижения игрока
+        private const double MaxSpeed = 5;
+
+        // Максимальная сила удара по мячу
         private const double MaxKickSpeed = 25;
+
+        // Дистанция до мяча, на которой игрок может ударить по мячу
         private const double BallKickDistance = 10;
 
-        private Random _random = new Random(); //Вызываем Рандом
+        // Генератор случайных чисел для определения случайной силы удара
+        private Random _random = new Random();
 
-        //Конструктор принимет имя игрока
+        // Конструктор, который принимает имя игрока
         public Player(string name)
         {
             Name = name;
         }
 
-        //Конструктор принимет имя,команду и x,y
+        // Конструктор, который принимает имя игрока, его координаты и команду
         public Player(string name, double x, double y, Team team)
         {
             Name = name;
@@ -36,57 +45,68 @@ namespace FoodballGame
             Team = team;
         }
 
-        //Метод устоновки позицый
-        public void SetPosition(double x, double y) 
+        // Метод для установки позиции игрока на поле
+        public void SetPosition(double x, double y)
         {
             X = x;
             Y = y;
         }
 
-        //Устанавливатся позитсия относительно команды
+        // Возвращает абсолютную позицию игрока относительно команды
         public (double, double) GetAbsolutePosition()
         {
+            // Используем метод игры для получения позиции игрока относительно команды
             return Team!.Game.GetPositionForTeam(Team, X, Y);
         }
 
-        //Получение дистанцыи команды 
+        // Возвращает расстояние от игрока до мяча
         public double GetDistanceToBall()
         {
-            var ballPosition = Team!.GetBallPosition();
-            var dx = ballPosition.Item1 - X;
-            var dy = ballPosition.Item2 - Y;
-            return Math.Sqrt(dx * dx + dy * dy);
+            var ballPosition = Team!.GetBallPosition(); // Получаем позицию мяча
+            var dx = ballPosition.Item1 - X; // Разница по оси X между игроком и мячом
+            var dy = ballPosition.Item2 - Y; // Разница по оси Y между игроком и мячом
+            return Math.Sqrt(dx * dx + dy * dy); // Возвращаем расстояние до мяча
         }
-        //Перемешения игрока к мечу
+
+        // Метод для движения игрока в сторону мяча
         public void MoveTowardsBall()
         {
-            var ballPosition = Team!.GetBallPosition();
-            var dx = ballPosition.Item1 - X;
-            var dy = ballPosition.Item2 - Y;
-            var ratio = Math.Sqrt(dx * dx + dy * dy) / MaxSpeed;
-            _vx = dx / ratio;
-            _vy = dy / ratio;
+            var ballPosition = Team!.GetBallPosition(); // Получаем позицию мяча
+            var dx = ballPosition.Item1 - X; // Разница по оси X между игроком и мячом
+            var dy = ballPosition.Item2 - Y; // Разница по оси Y между игроком и мячом
+            var ratio = Math.Sqrt(dx * dx + dy * dy) / MaxSpeed; // Рассчитываем коэффициент скорости
+            _vx = dx / ratio; // Устанавливаем скорость по оси X
+            _vy = dy / ratio; // Устанавливаем скорость по оси Y
         }
-        //передвижения
+
+        // Метод для передвижения игрока
         public void Move()
         {
+            // Если игрок не является ближайшим к мячу, он не двигается
             if (Team.GetClosestPlayerToBall() != this)
             {
                 _vx = 0;
                 _vy = 0;
             }
 
+            // Если игрок находится достаточно близко к мячу, он может нанести удар
             if (GetDistanceToBall() < BallKickDistance)
             {
+                // Устанавливаем случайную скорость мяча в направлении удара
                 Team.SetBallSpeed(
-                    MaxKickSpeed * _random.NextDouble(),
-                    MaxKickSpeed * (_random.NextDouble() - 0.5)
-                    );
+                    MaxKickSpeed * _random.NextDouble(), // Случайная скорость удара по X
+                    MaxKickSpeed * (_random.NextDouble() - 0.5) // Случайная скорость удара по Y
+                );
             }
 
+            // Рассчитываем новые координаты игрока
             var newX = X + _vx;
             var newY = Y + _vy;
+
+            // Получаем абсолютную позицию на поле относительно команды
             var newAbsolutePosition = Team.Game.GetPositionForTeam(Team, newX, newY);
+
+            // Если новая позиция игрока находится на поле, обновляем координаты
             if (Team.Game.Stadium.IsIn(newAbsolutePosition.Item1, newAbsolutePosition.Item2))
             {
                 X = newX;
@@ -94,6 +114,7 @@ namespace FoodballGame
             }
             else
             {
+                // Если позиция за пределами поля, останавливаем игрока
                 _vx = _vy = 0;
             }
         }
