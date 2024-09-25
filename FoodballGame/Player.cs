@@ -9,6 +9,8 @@ namespace FoodballGame
     public class Player
     {
         public string Name { get; } // Имя игрока
+        private double _x, _y;
+        private double _vx, _vy;
         public double X { get; private set; } // Текущая позиция игрока по оси X
         public double Y { get; private set; } // Текущая позиция игрока по оси Y
 
@@ -40,31 +42,31 @@ namespace FoodballGame
         public Player(string name, double x, double y, Team team)
         {
             Name = name;
-            X = x;
-            Y = y;
+            _x = x;
+            _y = y;
             Team = team;
         }
 
         // Метод для установки позиции игрока на поле
         public void SetPosition(double x, double y)
         {
-            X = x;
-            Y = y;
+            _x = x;
+            _y = y;
         }
 
         // Возвращает абсолютную позицию игрока относительно команды
         public (double, double) GetAbsolutePosition()
         {
             // Используем метод игры для получения позиции игрока относительно команды
-            return Team!.Game.GetPositionForTeam(Team, X, Y);
+            return Team!.Game.GetPositionForTeam(Team, _x, _y);
         }
 
         // Возвращает расстояние от игрока до мяча
         public double GetDistanceToBall()
         {
             var ballPosition = Team!.GetBallPosition(); // Получаем позицию мяча
-            var dx = ballPosition.Item1 - X; // Разница по оси X между игроком и мячом
-            var dy = ballPosition.Item2 - Y; // Разница по оси Y между игроком и мячом
+            var dx = ballPosition.Item1 - _x; // Разница по оси X между игроком и мячом
+            var dy = ballPosition.Item2 - _y; // Разница по оси Y между игроком и мячом
             return Math.Sqrt(dx * dx + dy * dy); // Возвращаем расстояние до мяча
         }
 
@@ -72,8 +74,8 @@ namespace FoodballGame
         public void MoveTowardsBall()
         {
             var ballPosition = Team!.GetBallPosition(); // Получаем позицию мяча
-            var dx = ballPosition.Item1 - X; // Разница по оси X между игроком и мячом
-            var dy = ballPosition.Item2 - Y; // Разница по оси Y между игроком и мячом
+            var dx = ballPosition.Item1 - _x; // Разница по оси X между игроком и мячом
+            var dy = ballPosition.Item2 - _y; // Разница по оси Y между игроком и мячом
             var ratio = Math.Sqrt(dx * dx + dy * dy) / MaxSpeed; // Рассчитываем коэффициент скорости
             _vx = dx / ratio; // Устанавливаем скорость по оси X
             _vy = dy / ratio; // Устанавливаем скорость по оси Y
