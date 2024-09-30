@@ -8,25 +8,19 @@ namespace FoodballGame
 {
     public class Program
     {
-        static void ChangeConsoleColor(ConsoleColor foregroundColor)
-        {
-            Console.ForegroundColor = foregroundColor;
-
-        }
         public static void Main()
         {
             Console.OutputEncoding = System.Text.Encoding.UTF8;
-            // loomine team ja stadium
-            Team esimeneTeam = new Team("Esimene Team");
-            Team teineTeam = new Team("Teine Team");
+            // Создание команд и стадиона
+            Team esimeneTeam = new Team("Esimene tiim");
+            Team teineTeam = new Team("Teine tiim");
             Stadium stadium = new Stadium(70, 20);
             Game game = new Game(esimeneTeam, teineTeam, stadium);
 
-            // loomine mängija
-            for (int i = 1; i <= 10; i++)
+            for (int i = 1; i <= 12; i++)
             {
                 Player player = new Player($"Player {i}");
-                if (i <= 5)
+                if (i <= 6)
                 {
                     esimeneTeam.AddPlayer(player);
                 }
@@ -37,15 +31,14 @@ namespace FoodballGame
             }
 
             game.Start();
-            Console.WindowWidth = stadium.Width + 2;
+            Console.WindowWidth = stadium.Width + 3;
             Console.WindowHeight = stadium.Height + 1;
-
             while (true)
             {
                 game.Move();
-                Team.DrawField(stadium.Width, stadium.Height, esimeneTeam.Players, teineTeam.Players, game.Ball);
+                Team.DrawField(stadium.Width, stadium.Height, esimeneTeam, teineTeam, game.Ball);
                 Thread.Sleep(100);
-                Console.SetCursorPosition(0, 0);
+                Console.SetCursorPosition(0,0);
             }
         }
     }

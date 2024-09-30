@@ -44,7 +44,7 @@ namespace FoodballGame
 
         public (double, double) GetAbsolutePosition() //Saada absoluutne asukoht
         {
-            return Team!.Game.GetPositionForTeam(Team, X, Y);
+            return Team!.Game.GetPositionForTeam(Team, Y, X);
         }
 
         public double GetDistanceToBall() //Saage pallile kaugus

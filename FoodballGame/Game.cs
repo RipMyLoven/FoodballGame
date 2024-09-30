@@ -25,9 +25,9 @@ namespace FoodballGame
 
         public void Start()
         {
-            Ball = new Ball(Stadium.Width / 2, Stadium.Height / 2, this);
-            HomeTeam.StartGame(Stadium.Width / 2, Stadium.Height);
-            AwayTeam.StartGame(Stadium.Width / 2, Stadium.Height);
+            Ball = new Ball(Stadium.Width / 1.5, Stadium.Height / 1, this);
+            HomeTeam.StartGame(Stadium.Width / 1, Stadium.Height);
+            AwayTeam.StartGame(Stadium.Width / 1, Stadium.Height);
         }
         private (double, double) GetPositionForAwayTeam(double x, double y)
         {

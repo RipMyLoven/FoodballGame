@@ -67,7 +67,7 @@ namespace FoodballGame
             GetClosestPlayerToBall().MoveTowardsBall();
             Players.ForEach(player => player.Move());
         }
-        public static void DrawField(int width, int height, List<Player> homePlayers, List<Player> awayPlayers, Ball ball)
+        public static void DrawField(int width, int height, Team homeTeam, Team awayTeam, Ball ball)
         {
             for (int y = 0; y < height; y++)
             {
@@ -75,12 +75,12 @@ namespace FoodballGame
                 Console.Write("!");
                 for (int x = 0; x < width; x++)
                 {
-                    if (Player.IsPlayerAtPosition(x, y, homePlayers))
+                    if (Player.IsPlayerAtPosition(x, y, homeTeam.Players))
                     {
                         Console.ForegroundColor = ConsoleColor.Blue;
                         Console.Write("E");
                     }
-                    else if (Player.IsPlayerAtPosition(x, y, awayPlayers))
+                    else if (Player.IsPlayerAtPosition(x, y, awayTeam.Players))
                     {
                         Console.ResetColor();
                         Console.ForegroundColor = ConsoleColor.Red;
@@ -103,5 +103,6 @@ namespace FoodballGame
                 Console.Write("!");
             }
         }
+
     }
 }
