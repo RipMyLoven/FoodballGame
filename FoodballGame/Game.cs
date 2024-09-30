@@ -1,107 +1,66 @@
-﻿using System;
+﻿using FoodballGame;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace FoodballGame
 {
     public class Game
     {
-        // Команды: домашняя и гостевая
-        private Team homeTeam;
-        private Team awayTeam;
+        public Team HomeTeam { get; }
+        public Team AwayTeam { get; }
+        public Stadium Stadium { get; }
+        public Ball Ball { get; private set; }
 
-        // Стадион, на котором проходит игра
-        private Stadium stadium;
-
-        // Мяч, используемый в игре
-        private Ball ball;
-
-        // Конструктор, принимающий домашнюю команду, гостевую команду и стадион
         public Game(Team homeTeam, Team awayTeam, Stadium stadium)
         {
-            this.homeTeam = homeTeam;
-            this.awayTeam = awayTeam;
-            this.stadium = stadium;
-
-            // Устанавливаем ссылку на текущую игру для обеих команд
-            homeTeam.SetGame(this);
-            awayTeam.SetGame(this);
+            HomeTeam = homeTeam;
+            homeTeam.Game = this;
+            AwayTeam = awayTeam;
+            awayTeam.Game = this;
+            Stadium = stadium;
         }
 
-        // Метод для начала игры
         public void Start()
         {
-            // Устанавливаем мяч в центр стадиона
-            ball = new Ball(stadium.GetWidth() / 2, stadium.GetHeight() / 2, this);
-
-            // Инициализируем позиции игроков для домашней команды
-            homeTeam.InitializePositions(stadium.GetWidth() / 2, stadium.GetHeight());
-
-            // Инициализируем позиции игроков для гостевой команды
-            awayTeam.InitializePositions(stadium.GetWidth() / 2, stadium.GetHeight());
+            Ball = new Ball(Stadium.Width / 2, Stadium.Height / 2, this);
+            HomeTeam.StartGame(Stadium.Width / 2, Stadium.Height);
+            AwayTeam.StartGame(Stadium.Width / 2, Stadium.Height);
         }
-
-        // Возвращает домашнюю команду
-        public Team GetHomeTeam()
+        private (double, double) GetPositionForAwayTeam(double x, double y)
         {
-            return homeTeam;
+            return (Stadium.Width - x, Stadium.Height - y);
         }
 
-        // Возвращает гостевую команду
-        public Team GetAwayTeam()
+        public (double, double) GetPositionForTeam(Team team, double x, double y)
         {
-            return awayTeam;
+            return team == HomeTeam ? (x, y) : GetPositionForAwayTeam(x, y);
         }
 
-        // Возвращает стадион
-        public Stadium GetStadium()
+        public (double, double) GetBallPositionForTeam(Team team)
         {
-            return stadium;
+            return GetPositionForTeam(team, Ball.X, Ball.Y);
         }
 
-        // Возвращает мяч
-        public Ball GetBall()
-        {
-            return ball;
-        }
-
-        // Получает позицию для гостевой команды, зеркально относительно стадиона
-        public Position GetPositionForAwayTeam(double x, double y)
-        {
-            return new Position(stadium.GetWidth() - x, stadium.GetHeight() - y);
-        }
-
-        // Возвращает позицию мяча для команды
-        public Position GetBallPositionForTeam(Team team)
-        {
-            if (team == homeTeam)
-            {
-                return new Position(ball.GetX(), ball.GetY());
-            }
-            // Для гостевой команды позиции зеркально отображены
-            return GetPositionForAwayTeam(ball.GetX(), ball.GetY());
-        }
-
-        // Устанавливает скорость мяча в зависимости от команды
         public void SetBallSpeedForTeam(Team team, double vx, double vy)
         {
-            if (team == awayTeam)
+            if (team == HomeTeam)
             {
-                // Для гостевой команды скорость мяча зеркальна
-                ball.SetSpeed(-vx, -vy);
+                Ball.SetSpeed(vx, vy);
             }
             else
             {
-                // Для домашней команды скорость мяча обычная
-                ball.SetSpeed(vx, vy);
+                Ball.SetSpeed(-vx, -vy);
             }
         }
 
-        // Метод для обновления состояния игры (каждый "тик" времени)
-        public void Tick()
+        public void Move()
         {
-            // Передвигаем игроков домашней и гостевой команд, а также мяч
-            homeTeam.Move();
-            awayTeam.Move();
-            ball.Move();
+            HomeTeam.Move();
+            AwayTeam.Move();
+            Ball.Move();
         }
     }
 }
