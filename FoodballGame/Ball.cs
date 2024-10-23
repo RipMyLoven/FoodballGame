@@ -1,4 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Runtime.Intrinsics.X86;
+using System.Text;
+using System.Threading.Tasks;
+using System.Xml.Linq;
 
 namespace FoodballGame
 {
@@ -18,12 +24,6 @@ namespace FoodballGame
             Y = y;
         }
 
-        public void SetPosition(double x, double y)
-        {
-            X = x;
-            Y = y;
-        }
-
         public void SetSpeed(double vx, double vy)
         {
             _vx = vx;
@@ -34,28 +34,15 @@ namespace FoodballGame
         {
             double newX = X + _vx;
             double newY = Y + _vy;
-
-            if (_game.Stadium.IsIn(newX, newY))//проверка на столкновение с стеной
+            if (_game.Stadium.IsIn(newX, newY))
             {
                 X = newX;
                 Y = newY;
             }
             else
             {
-
-                if (newX < 0 || newX >= _game.Stadium.Width)//рикошет от стены
-                {
-                    _vx = -_vx; //смена направление по оси X
-                    newX = X + _vx; //перемещение мяч на 1 пиксель
-                    X = newX < 0 ? 1 : newX >= _game.Stadium.Width ? _game.Stadium.Width - 1 : newX;
-                }
-
-                if (newY < 0 || newY >= _game.Stadium.Height)
-                {
-                    _vy = -_vy; //сменна направление по оси Y
-                    newY = Y + _vy; //перимещаем мяч на 1 пиксель
-                    Y = newY < 0 ? 1 : newY >= _game.Stadium.Height ? _game.Stadium.Height - 1 : newY;
-                }
+                _vx = 0;
+                _vy = 0;
             }
         }
     }

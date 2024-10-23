@@ -1,22 +1,29 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace FoodballGame
 {
     public class Player
     {
-        public string Name { get; }
-        public double X { get; private set; }
-        public double Y { get; private set; }
-        private double _vx, _vy;
-        public Team? Team { get; set; } = null;
 
-        private const double MaxSpeed = 2;
-        private const double MaxKickSpeed = 15;
-        private const double BallKickDistance = 10;
+        //väljud
+        public string Name { get; } //mängija nimi
+        public double X { get; private set; } //mängija x koordinaat
+        public double Y { get; private set; } //mängija y koordinaat
+        private double _vx, _vy;  //mängija ja palli kaugus
+        public Team? Team { get; set; } = null; //meeskond, kus mängija mängib
 
-        private Random _random = new Random();
+        private const double MaxSpeed = 1; //maksimaalse mängija kiirus
+        private const double MaxKickSpeed = 15; //max löögikiirus
+        private const double BallKickDistance = 4; //löögikaugus
 
-        public Player(string name)
+        private Random _random = new Random(); //juhuslik arv
+
+        //konstruktorid
+        public Player(string name) //sõltub sõnast ja sõne võrdleb Nimega
         {
             Name = name;
         }
@@ -29,18 +36,18 @@ namespace FoodballGame
             Team = team;
         }
 
-        public void SetPosition(double x, double y)
+        public void SetPosition(double x, double y) //määrata mängija koordinaadid
         {
             X = x;
             Y = y;
         }
 
-        public (double, double) GetAbsolutePosition()
+        public (double, double) GetAbsolutePosition() //Saada absoluutne asukoht
         {
-            return Team!.Game.GetPositionForTeam(Team, X, Y);
+            return Team!.Game.GetPositionForTeam(Team, Y, X);
         }
 
-        public double GetDistanceToBall()
+        public double GetDistanceToBall() //Saage pallile kaugus
         {
             var ballPosition = Team!.GetBallPosition();
             var dx = ballPosition.Item1 - X;
@@ -48,7 +55,7 @@ namespace FoodballGame
             return Math.Sqrt(dx * dx + dy * dy);
         }
 
-        public void MoveTowardsBall()
+        public void MoveTowardsBall() //Liikumine pallile
         {
             var ballPosition = Team!.GetBallPosition();
             var dx = ballPosition.Item1 - X;
@@ -70,8 +77,8 @@ namespace FoodballGame
             {
                 Team.SetBallSpeed(
                     MaxKickSpeed * _random.NextDouble(),
-                    MaxKickSpeed * (_random.NextDouble() - 0.5)
-                );
+                    MaxKickSpeed * (_random.NextDouble() - 0.1)
+                    );
             }
 
             var newX = X + _vx;
@@ -84,8 +91,37 @@ namespace FoodballGame
             }
             else
             {
-                _vx = _vy = 0; //остановка игрока, если он выходит за пределы
+                _vx = _vy = 0;
             }
+        }
+        public static bool IsPlayerAtPosition(int x, int y, List<Player> players)
+        {
+            // проходим по списку игроков в команде.
+            foreach (var player in players)
+            {
+                // Округляем координаты игрока до целых чисел.
+                int playerX = (int)Math.Round(player.X);
+                int playerY = (int)Math.Round(player.Y);
+
+                // сравниваем координаты игрока с указанными x y
+                if (playerX == x && playerY == y)
+                {
+                    return true; // возвращаем true если игрок находится в указанных координатах
+                }
+            }
+
+            return false; // если ни один игрок не находится в указанных координатах возвращаем false
+        }
+
+        // проверяет, есть ли мяч в указанных координатах x y на игровом поле
+        public static bool IsBallAtPosition(int x, int y, Ball ball)
+        {
+            // Округляем координаты мяча до целых чисел.
+            int ballX = (int)Math.Round(ball.X);
+            int ballY = (int)Math.Round(ball.Y);
+
+            // сравниваем координаты мяча с указанными x y
+            return ballX == x && ballY == y; // возвращаем true если мяч находится в указанных координатах иначе false
         }
     }
 }

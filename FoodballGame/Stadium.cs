@@ -1,4 +1,6 @@
-﻿namespace FoodballGame
+﻿using System;
+
+namespace FoodballGame
 {
     public class Stadium
     {
