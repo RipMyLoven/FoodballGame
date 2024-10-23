@@ -60,13 +60,13 @@
 
         private void CheckGoal()
         {
-            // Проверка на голы
-            if (Ball.X <= 0) // Мяч попал в ворота домашней команды
+            if (Ball.X <= 0)
             {
                 AwayTeam.ScoreGoal();
                 ResetBall();
             }
-            else if (Ball.X >= Stadium.Width - 1) // Мяч попал в ворота выездной команды
+
+            else if (Ball.X >= Stadium.Width)
             {
                 HomeTeam.ScoreGoal();
                 ResetBall();
