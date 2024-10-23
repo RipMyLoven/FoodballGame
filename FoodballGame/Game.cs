@@ -1,11 +1,4 @@
-﻿using FoodballGame;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace FoodballGame
+﻿namespace FoodballGame
 {
     public class Game
     {
@@ -25,10 +18,11 @@ namespace FoodballGame
 
         public void Start()
         {
-            Ball = new Ball(Stadium.Width / 1.5, Stadium.Height / 1, this);
-            HomeTeam.StartGame(Stadium.Width / 1, Stadium.Height);
-            AwayTeam.StartGame(Stadium.Width / 1, Stadium.Height);
+            Ball = new Ball(Stadium.Width / 2, Stadium.Height / 2, this);
+            HomeTeam.StartGame(Stadium.Width, Stadium.Height);
+            AwayTeam.StartGame(Stadium.Width, Stadium.Height);
         }
+
         private (double, double) GetPositionForAwayTeam(double x, double y)
         {
             return (Stadium.Width - x, Stadium.Height - y);
@@ -61,6 +55,28 @@ namespace FoodballGame
             HomeTeam.Move();
             AwayTeam.Move();
             Ball.Move();
+            CheckGoal();
+        }
+
+        private void CheckGoal()
+        {
+            // Проверка на голы
+            if (Ball.X <= 0) // Мяч попал в ворота домашней команды
+            {
+                AwayTeam.ScoreGoal();
+                ResetBall();
+            }
+            else if (Ball.X >= Stadium.Width - 1) // Мяч попал в ворота выездной команды
+            {
+                HomeTeam.ScoreGoal();
+                ResetBall();
+            }
+        }
+
+        private void ResetBall()
+        {
+            Ball.SetPosition(Stadium.Width / 2, Stadium.Height / 2);
+            Ball.SetSpeed(0, 0);
         }
     }
 }
