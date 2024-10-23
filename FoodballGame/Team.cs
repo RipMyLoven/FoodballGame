@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml.Linq;
+using System.Numerics;
 
 namespace FoodballGame
 {
@@ -12,6 +9,7 @@ namespace FoodballGame
         public List<Player> Players { get; } = new List<Player>();
         public string Name { get; private set; }
         public Game Game { get; set; }
+        public int Score { get; private set; } = 0;
 
         public Team(string name)
         {
@@ -23,8 +21,10 @@ namespace FoodballGame
             Random rnd = new Random();
             foreach (var player in Players)
             {
-                player.SetPosition(rnd.Next(1, width - 1), rnd.Next(1, height - 1));
-                player.Team = this; // Устанавливаем команду игрока - Mängija meeskonna seadistamine
+                player.SetPosition(
+                    rnd.NextDouble() * width,
+                    rnd.NextDouble() * height
+                );
             }
         }
 
@@ -48,7 +48,7 @@ namespace FoodballGame
         public Player GetClosestPlayerToBall()
         {
             Player closestPlayer = Players[0];
-            double bestDistance = Double.MaxValue;
+            double bestDistance = double.MaxValue;
             foreach (var player in Players)
             {
                 var distance = player.GetDistanceToBall();
@@ -67,42 +67,10 @@ namespace FoodballGame
             GetClosestPlayerToBall().MoveTowardsBall();
             Players.ForEach(player => player.Move());
         }
-        public static void DrawField(int width, int height, Team homeTeam, Team awayTeam, Ball ball)
-        {
-            for (int y = 0; y < height; y++)
-            {
-                Console.SetCursorPosition(0, y + 1);
-                Console.Write("!");
-                for (int x = 0; x < width; x++)
-                {
-                    if (Player.IsPlayerAtPosition(x, y, homeTeam.Players))
-                    {
-                        Console.ForegroundColor = ConsoleColor.Blue;
-                        Console.Write("E");
-                    }
-                    else if (Player.IsPlayerAtPosition(x, y, awayTeam.Players))
-                    {
-                        Console.ResetColor();
-                        Console.ForegroundColor = ConsoleColor.Red;
-                        Console.Write("T");
-                    }
-                    else if (Player.IsBallAtPosition(x, y, ball))
-                    {
-                        Console.ResetColor();
-                        Console.ForegroundColor = ConsoleColor.Yellow;
-                        Console.Write(" O ");
-                    }
-                    else
-                    {
-                        Console.ResetColor();
-                        Console.Write(" ");
-                    }
-                }
-                Console.ResetColor();
-                Console.ForegroundColor = ConsoleColor.White;
-                Console.Write("!");
-            }
-        }
 
+        public void ScoreGoal()
+        {
+            Score++;
+        }
     }
 }

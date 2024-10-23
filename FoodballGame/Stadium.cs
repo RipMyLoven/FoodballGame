@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace FoodballGame
+﻿namespace FoodballGame
 {
     public class Stadium
     {
