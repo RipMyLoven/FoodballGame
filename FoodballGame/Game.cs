@@ -63,17 +63,15 @@
             int ballX = (int)Ball.X;
             int ballY = (int)Ball.Y;
 
-            // Проверка на попадание мяча в ворота команды A
             if (ballX == 0 && ballY >= (Stadium.Height / 2 - 2) && ballY <= (Stadium.Height / 2 + 2))
             {
-                TeamB.Score++; // Команда B забивает
-                ResetBall(); // Сбрасываем мяч
+                TeamB.Score++;
+                ResetBall();
             }
 
-            // Проверка на попадание мяча в ворота команды B
             else if (ballX == Stadium.Width - 1 && ballY >= (Stadium.Height / 2 - 2) && ballY <= (Stadium.Height / 2 + 2))
             {
-                TeamA.Score++; // Команда A забивает
+                TeamA.Score++;
                 ResetBall();
             }
         }
