@@ -7,25 +7,25 @@ namespace FoodballGame
     {
         static void Main(string[] args)
         {
-            Stadium stadium = new Stadium(40, 20);
+            Stadium stadion = new Stadium(40, 20);
 
-            Team homeTeam = new Team("Home");
-            Team awayTeam = new Team("Away");
+            Team TeamA = new ("Team A");
+            Team TeamB = new ("Team B");
 
             for (int i = 0; i < 11; i++)
             {
-                homeTeam.AddPlayer(new Player($"HomePlayer{i + 1}"));
-                awayTeam.AddPlayer(new Player($"AwayPlayer{i + 1}"));
+                TeamA.AddPlayer(new Player($"TeamA{i + 1}"));
+                TeamB.AddPlayer(new Player($"TeamB{i + 1}"));
             }
 
-            Game game = new Game(homeTeam, awayTeam, stadium);
+            Game game = new Game(TeamA, TeamB, stadion);
             game.Start();
 
             while (true)
             {
                 game.Move();
                 PrintGameState(game);
-                Thread.Sleep(100); // Ускорение игры
+                Thread.Sleep(100);
 
                 if (Console.KeyAvailable)
                 {
@@ -55,24 +55,24 @@ namespace FoodballGame
             }
 
             Console.ForegroundColor = ConsoleColor.Blue;
-            foreach (var player in game.HomeTeam.Players)
-            {
-                int playerX = (int)player.X;
-                int playerY = (int)player.Y;
-                if (playerX >= 0 && playerX < width && playerY >= 0 && playerY < height)
-                {
-                    field[playerY, playerX] = 'H';
-                }
-            }
-
-            Console.ForegroundColor = ConsoleColor.Red;
-            foreach (var player in game.AwayTeam.Players)
+            foreach (var player in game.TeamA.Players)
             {
                 int playerX = (int)player.X;
                 int playerY = (int)player.Y;
                 if (playerX >= 0 && playerX < width && playerY >= 0 && playerY < height)
                 {
                     field[playerY, playerX] = 'A';
+                }
+            }
+
+            Console.ForegroundColor = ConsoleColor.Red;
+            foreach (var player in game.TeamB.Players)
+            {
+                int playerX = (int)player.X;
+                int playerY = (int)player.Y;
+                if (playerX >= 0 && playerX < width && playerY >= 0 && playerY < height)
+                {
+                    field[playerY, playerX] = 'B';
                 }
             }
 
@@ -108,17 +108,17 @@ namespace FoodballGame
             }
 
             Console.ResetColor();
-            Console.WriteLine($"Score: {game.HomeTeam.Name} {game.HomeTeam.Score} - {game.AwayTeam.Score} {game.AwayTeam.Name}\n");
+            Console.WriteLine($"Score: {game.TeamA.Name} {game.TeamA.Score} - {game.TeamB.Score} {game.TeamB.Name}\n");
 
             for (int y = 0; y < height; y++)
             {
                 for (int x = 0; x < width; x++)
                 {
-                    if (field[y, x] == 'H')
+                    if (field[y, x] == 'A')
                     {
                         Console.ForegroundColor = ConsoleColor.Blue;
                     }
-                    else if (field[y, x] == 'A')
+                    else if (field[y, x] == 'B')
                     {
                         Console.ForegroundColor = ConsoleColor.Red;
                     }

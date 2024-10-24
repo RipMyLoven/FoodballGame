@@ -2,35 +2,35 @@
 {
     public class Game
     {
-        public Team HomeTeam { get; }
-        public Team AwayTeam { get; }
+        public Team TeamA { get; }
+        public Team TeamB { get; }
         public Stadium Stadium { get; }
-        public Ball Ball { get; private set; }
+        public Ball Ball { get; set; }
 
-        public Game(Team homeTeam, Team awayTeam, Stadium stadium)
+        public Game(Team teamA, Team teamB, Stadium stadium)
         {
-            HomeTeam = homeTeam;
-            homeTeam.Game = this;
-            AwayTeam = awayTeam;
-            awayTeam.Game = this;
+            TeamA = teamA;
+            teamA.Game = this;
+            TeamB = teamB;
+            teamB.Game = this;
             Stadium = stadium;
         }
 
         public void Start()
         {
             Ball = new Ball(Stadium.Width / 2, Stadium.Height / 2, this);
-            HomeTeam.StartGame(Stadium.Width, Stadium.Height);
-            AwayTeam.StartGame(Stadium.Width, Stadium.Height);
+            TeamA.StartGame(Stadium.Width, Stadium.Height);
+            TeamB.StartGame(Stadium.Width, Stadium.Height);
         }
 
-        private (double, double) GetPositionForAwayTeam(double x, double y)
+        private (double, double) GetPositionForTeamB(double x, double y)
         {
             return (Stadium.Width - x, Stadium.Height - y);
         }
 
         public (double, double) GetPositionForTeam(Team team, double x, double y)
         {
-            return team == HomeTeam ? (x, y) : GetPositionForAwayTeam(x, y);
+            return team == TeamA ? (x, y) : GetPositionForTeamB(x, y);
         }
 
         public (double, double) GetBallPositionForTeam(Team team)
@@ -40,7 +40,7 @@
 
         public void SetBallSpeedForTeam(Team team, double vx, double vy)
         {
-            if (team == HomeTeam)
+            if (team == TeamA)
             {
                 Ball.SetSpeed(vx, vy);
             }
@@ -52,27 +52,31 @@
 
         public void Move()
         {
-            HomeTeam.Move();
-            AwayTeam.Move();
+            TeamA.Move();
+            TeamB.Move();
             Ball.Move();
             CheckGoal();
         }
 
         private void CheckGoal()
         {
-            if (Ball.X <= 0)
+            int ballX = (int)Ball.X;
+            int ballY = (int)Ball.Y;
+
+            // Проверка на попадание мяча в ворота команды A
+            if (ballX == 0 && ballY >= (Stadium.Height / 2 - 2) && ballY <= (Stadium.Height / 2 + 2))
             {
-                AwayTeam.ScoreGoal();
-                ResetBall();
+                TeamB.Score++; // Команда B забивает
+                ResetBall(); // Сбрасываем мяч
             }
 
-            else if (Ball.X >= Stadium.Width)
+            // Проверка на попадание мяча в ворота команды B
+            else if (ballX == Stadium.Width - 1 && ballY >= (Stadium.Height / 2 - 2) && ballY <= (Stadium.Height / 2 + 2))
             {
-                HomeTeam.ScoreGoal();
+                TeamA.Score++; // Команда A забивает
                 ResetBall();
             }
         }
-
         private void ResetBall()
         {
             Ball.SetPosition(Stadium.Width / 2, Stadium.Height / 2);

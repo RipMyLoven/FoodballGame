@@ -8,7 +8,7 @@ namespace FoodballGame
         public List<Player> Players { get; } = new List<Player>();
         public string Name { get; private set; }
         public Game Game { get; set; }
-        public int Score { get; private set; } = 0;
+        public int Score { get; set; } = 0;
 
         public Team(string name)
         {

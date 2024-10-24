@@ -84,7 +84,7 @@ namespace FoodballGame
             }
             else
             {
-                _vx = _vy = 0; //остановка игрока, если он выходит за пределы
+                _vx = _vy = 0;
             }
         }
     }
